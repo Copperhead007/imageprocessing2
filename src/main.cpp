@@ -7,23 +7,25 @@
 void ip(int H, int W, int choice) {
    unsigned char buffer[H][W];
    unsigned char outimg[H][W];
-   float xfilter[9] = {-1,0,1,-2,0,2,-1,0,1};
-   float yfilter[9] = {1, 2, 1, 0, 0, 0, -1, -2, -1};
-   float xfive[25] = {-1, -2, 0, 2, 1, -1, -2, 0, 2, 1, -1, -2, 0, 2, 1, -1, -2, 0, 2, 1, -1, -2, 0, 2, 1};
-   float yfive[25] = {1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, -2, -2, -2, -2, -2, -1, -1, -1, -1, -1};
-   int i = 0, j = 0, sum = 0;
-   float p = 0, pl = 0, pr = 0, pu = 0, pd = 0, ptl = 0, ptopr = 0, pbl = 0, pbr = 0;
-   float a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0, l = 0;
-   float m = 0, n = 0, o = 0, t = 0, q = 0, r = 0, s = 0;
+   unsigned char sum;
+   int xfilter[9] = {-1,0,1,-2,0,2,-1,0,1};
+   int yfilter[9] = {1, 2, 1, 0, 0, 0, -1, -2, -1};
+   int xfive[25] = {-1, -2, 0, 2, 1, -1, -2, 0, 2, 1, -1, -2, 0, 2, 1, -1, -2, 0, 2, 1, -1, -2, 0, 2, 1};
+   int yfive[25] = {1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, -2, -2, -2, -2, -2, -1, -1, -1, -1, -1};
+   int i = 0, j = 0;
+   double p = 0, pl = 0, pr = 0, pu = 0, pd = 0, ptl = 0, ptopr = 0, pbl = 0, pbr = 0;
+   double a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0, l = 0;
+   double m = 0, n = 0, o = 0, t = 0, q = 0, r = 0, s = 0;
     //manually change depending on image raw being manipulated
-   FILE * fp = fopen("unesco-1.raw", "rb");
+   FILE * fp = fopen("blackball.raw", "rb");
    fread(buffer, H*W, 1, fp);
 
     //loops through images and writes to output files
     //int p = 0, pl = 0, pr = 0, pu = 0, pd = 0, ptl = 0, ptopr = 0, pbl = 0, pbr = 0;
     if(choice == 0){
-     for(i = 0; i < (H); i++){
-        for(j = 0; j < (W); j++){
+     for(i = 0; i < H; i++){
+        //printf("%d\n", sum);
+        for(j = 0; j < W; j++){
             //these hold the value of an images pixel and set bounds for operations
             //printf("%x\n",buffer[i][j]);
             if((i-1) < 0 || (i-1) >= H || (j-1) < 0 || (j-1) >= W){
@@ -31,6 +33,8 @@ void ip(int H, int W, int choice) {
             }
             else{
                 ptl = buffer[i-1][j-1] * xfilter[0];
+                if(ptl != -255)
+                printf("%0.2f ",ptl);
             }
             if((i-1) < 0 || (i-1) >= H || (j) < 0 || (j) >= W){
                 pu = 0;
@@ -82,16 +86,15 @@ void ip(int H, int W, int choice) {
             }
             
             sum = ptl + pu + ptopr + pl + p + pr + pbl + pd + pbr;
-            if(sum > 255){
-                sum = (sum % 255);
-            }
-            else if (sum < 0)
+            sum = (sum / 255) * 63;
+            if (sum < 0)
             {
-                sum = 0;
+                sum = 128;
             }
             else{
                 sum = sum;
             }
+            //printf("%d ", sum);
             //assigning result to single pixel
             outimg[i][j] = sum;
             //printf("%x %x\n", outimage[i][j],buffer[i][j]);
@@ -159,7 +162,8 @@ void ip(int H, int W, int choice) {
             
             sum = ptl + pu + ptopr + pl + p + pr + pbl + pd + pbr;
             if(sum > 255){
-                sum = (sum % 255);
+                printf("In Y3 sum is %d", sum);
+                sum = 255;
             }
             else if (sum < 0)
             {
@@ -331,7 +335,8 @@ void ip(int H, int W, int choice) {
             
             sum = ptl + pu + ptopr + pl + p + pr + pbl + pd + pbr + a + b + c + d + e + f + g + h + l + m + n + o + t + q + r + s;
              if(sum > 255){
-                sum = (sum % 255);
+                printf("In X5 sum is %d", sum);
+                sum = (sum / 3);
             }
             else if (sum < 0)
             {
@@ -503,7 +508,8 @@ void ip(int H, int W, int choice) {
 
             sum = ptl + pu + ptopr + pl + p + pr + pbl + pd + pbr + a + b + c + d + e + f + g + h + l + m + n + o + t + q + r + s;
             if(sum > 255){
-                sum = (sum % 255);
+                printf("In Y5 sum is %d", sum);
+                sum = 255;
             }
             else if (sum < 0)
             {
@@ -520,7 +526,7 @@ void ip(int H, int W, int choice) {
     }
     //after ifs
     //manually change output to filter choice raw
-    FILE * fp2 = fopen("unesco5Vout.raw", "wb");
+    FILE * fp2 = fopen("blackball3Hout.raw", "wb");
 
     fwrite(outimg, H*W, 1, fp2);
 
@@ -540,7 +546,7 @@ int main(){
     2 - 5 Horizontal filter
     3 - 5 Vertical filter
     */
-    ip(imgH, imgW, 3);
+    ip(imgH, imgW, 0);
     //2D array of 0s Buffer is used to hold data from file pointer
     //Sobel Operators for difference operations
     //Convolve with 3*3 H/V & 5*5 H/V for 3 images = 12 images
@@ -595,4 +601,25 @@ int main(){
     fclose(fp11);
     fclose(fp12);
     fclose(fp13);
+
+    checking buffers
+     int check1 = 0, check2 = 0;
+
+   for(check1 = 0; check1 < H; check1++){
+    if(buffer[check1][check2] != 255){
+        printf("%x\n",buffer[check1][check2]);
+    }
+    else{
+        printf("\n");
+    }
+    printf("%x\n",buffer[check1][check2]);
+    for(check2 = 0; check2 < W; check2++){
+    if(buffer[check1][check2] != 255){
+         printf("%x ",buffer[check1][check2]);
+    }
+    else{
+        printf(" ");
+    }
+    }
+   }
     */
