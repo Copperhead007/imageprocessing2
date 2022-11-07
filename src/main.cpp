@@ -7,9 +7,9 @@
 void ip(int H, int W, int choice) {
    unsigned char buffer[H][W];
    unsigned char outimg[H][W];
-   unsigned char sum;
+   int sum = 0;
    int yfilter[9] = {-1,0,1,-2,0,2,-1,0,1};
-   int xfilter[9] = {1, 2, 1, 0, 0, 0, -1, -2, -1};
+   int xfilter[9] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
    int yfive[25] = {-1, -2, 0, 2, 1, -2, -4, 0, 4, 2, -4, -8, 0, 8, 4, -2, -4, 0, 4, 2, -1, -2, 0, 2, 1};
    int xfive[25] = {1, 2, 4, 2 ,1, 2, 4, 8, 4, 2, 0, 0, 0, 0, 0, -2, -4, -8, -4, -2, -1, -2, -4 -2, -1};
    int i = 0, j = 0;
@@ -21,7 +21,7 @@ void ip(int H, int W, int choice) {
 
    
     //manually change depending on image raw being manipulated
-   FILE * fp = fopen("blackball.raw", "rb");
+   FILE * fp = fopen("beach.raw", "rb");
    fread(buffer, H*W, 1, fp);
 
     /* Checking Buffer
@@ -96,8 +96,8 @@ void ip(int H, int W, int choice) {
                 pbr = buffer[i+1][j+1] * xfilter[8];
             }
             
-            sum = ptl + pu + ptopr + pl + p + pr + pbl + pd + pbr;
-            sum = (sum / 8) + 128;
+            sum = (ptl + pu + ptopr + pl + p + pr + pbl + pd + pbr) / 8 + 128;
+            
             //printf("%d ", sum);
             //assigning result to single pixel
             outimg[i][j] = sum;
@@ -164,8 +164,7 @@ void ip(int H, int W, int choice) {
                 pbr = buffer[i+1][j+1] * yfilter[8];
             }
             
-            sum = ptl + pu + ptopr + pl + p + pr + pbl + pd + pbr;
-            sum = (sum / 8) + 128;
+            sum = (ptl + pu + ptopr + pl + p + pr + pbl + pd + pbr) / 8 + 128;
             
             outimg[i][j] = sum;
         }
@@ -327,8 +326,7 @@ void ip(int H, int W, int choice) {
                 s = buffer[i+2][j+2] * xfive[24];
             }
             
-            sum = ptl + pu + ptopr + pl + p + pr + pbl + pd + pbr + a + b + c + d + e + f + g + h + l + m + n + o + t + q + r + s;
-            sum = (sum / 60) + 128;
+            sum = (ptl + pu + ptopr + pl + p + pr + pbl + pd + pbr + a + b + c + d + e + f + g + h + l + m + n + o + t + q + r + s) / 60 + 128;
             //these are operations performed on each image when looping through pixel by pixel
             outimg[i][j] = sum;
             //printf("%x %x\n", outimage[i][j],buffer[i][j]);
@@ -490,8 +488,7 @@ void ip(int H, int W, int choice) {
                 s = buffer[i+2][j+2] * yfive[24];
             }
 
-            sum = ptl + pu + ptopr + pl + p + pr + pbl + pd + pbr + a + b + c + d + e + f + g + h + l + m + n + o + t + q + r + s;
-            sum = (sum / 60) + 128;
+            sum = (ptl + pu + ptopr + pl + p + pr + pbl + pd + pbr + a + b + c + d + e + f + g + h + l + m + n + o + t + q + r + s) / 60 + 128;
             
             //these are operations performed on each image when looping through pixel by pixel
             outimg[i][j] = sum;
@@ -501,7 +498,7 @@ void ip(int H, int W, int choice) {
     }
     //after ifs
     //manually change output to filter choice raw
-    FILE * fp2 = fopen("blackball3Hout.raw", "wb");
+    FILE * fp2 = fopen("beach5Vout.raw", "wb");
 
     fwrite(outimg, H*W, 1, fp2);
 
@@ -521,7 +518,7 @@ int main(){
     2 - 5 Horizontal filter
     3 - 5 Vertical filter
     */
-    ip(imgH, imgW, 0);
+    ip(imgH, imgW, 3);
     //2D array of 0s Buffer is used to hold data from file pointer
     //Sobel Operators for difference operations
     //Convolve with 3*3 H/V & 5*5 H/V for 3 images = 12 images
