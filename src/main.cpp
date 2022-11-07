@@ -41,6 +41,7 @@ void ip(int H, int W, int choice) {
         //printf("%d\n", sum);
         for(j = 0; j < W; j++){
             //these hold the value of an images pixel and set bounds for operations
+            //instead of 0 for bounds checking maybe assign 128
             if((i-1) < 0 || (i-1) >= H || (j-1) < 0 || (j-1) >= W){
                 ptl = 0;
             }
